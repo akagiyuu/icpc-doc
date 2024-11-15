@@ -1,27 +1,25 @@
 #set text(size: 12pt)
-#set page(
-    paper: "a4"
-)
+#set page(paper: "a4")
 
 = Combinatorics
 - Binomial
 #columns(2)[
-    $ binom(r, k) = (-1)^k binom(k - r - 1, k) $
-    $ binom(n, m) = (-1)^(n - m) binom(-m - 1, n - m) $
-    $ binom(n, k - 1) + binom(n ,k) = binom(n + 1, k) $
-    $ sum_(i = 0)^n binom(n , i) = 2^n $
-    $ sum_(i >= 0) binom(n , 2i) = 2^(n - 1) $
-    $ sum_(k <= n) (-1)^k binom(r, k) = (-1)^n binom(r- 1, n) $
-    #colbreak()
-    $ sum_(k = 0)^n binom(r + k, k) = binom(r + n + 1, n) $
-    $ sum_(j = 0)^m binom(n + j, n) = binom(n + m + 1, m) $
-    $ sum_(j = 0)^n binom(j, m) = binom(n + 1, m + 1) $
-    $ sum_(i = 0)^n i binom(n , i) = n 2^(n - 1) $
-    $ sum_(k = 0)^n binom(r, k) binom(s, n - k) = binom(r + s , n) $
+  $ binom(r, k) = (-1)^k binom(k - r - 1, k) $
+  $ binom(n, m) = (-1)^(n - m) binom(-m - 1, n - m) $
+  $ binom(n, k - 1) + binom(n, k) = binom(n + 1, k) $
+  $ sum_(i = 0)^n binom(n, i) = 2^n $
+  $ sum_(i >= 0) binom(n, 2i) = 2^(n - 1) $
+  $ sum_(k <= n) (-1)^k binom(r, k) = (-1)^n binom(r- 1, n) $
+  #colbreak()
+  $ sum_(k = 0)^n binom(r + k, k) = binom(r + n + 1, n) $
+  $ sum_(j = 0)^m binom(n + j, n) = binom(n + m + 1, m) $
+  $ sum_(j = 0)^n binom(j, m) = binom(n + 1, m + 1) $
+  $ sum_(i = 0)^n i binom(n, i) = n 2^(n - 1) $
+  $ sum_(k = 0)^n binom(r, k) binom(s, n - k) = binom(r + s, n) $
 ]
 - Catalan
 $
-    C_n = 1/(n + 1) binom(2n, n) = sum_(k = 0)^(n - 1) C_k C_(n - 1 - k)
+  C_n = 1/(n + 1) binom(2n, n) = sum_(k = 0)^(n - 1) C_k C_(n - 1 - k)
 $
 - Next combination
 ```cpp
@@ -40,64 +38,102 @@ bool next_combination(vector<int>& a, int n) {
 ```
 - Number of elements in exactly $r$ set
 $
-    sum_(m = r)^n (-1)^(m - r) binom(m, r) sum_(bar X bar = m) bar union_(i in X) A_i bar
+  sum_(m = r)^n (-1)^(m - r) binom(m, r) sum_(bar X bar = m) bar union_(i in X) A_i bar
 $
 - Burnside's lemma
 $
-    bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) I(pi)
+  bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) I(pi)
 $
-$|G|$: count all permutation \
-$pi$: a transformation with retain the class of a element \
+$|G|$: count all permutation\
+$pi$: a transformation with retain the class of a element\
 $I(pi)$: number of fixed points of $pi$
 - Polýa enumeration theorem
 $
-    bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) k^(C(pi))
+  bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) k^(C(pi))
 $
 $C(pi)$: number of cycles in $pi$ \
 $k$: number of values that each representation element can take
 - Number of labeled graph $G_n = "pow"(2, (n (n + 1)) / 2)$
 - Number of connected labeled graphs
 $
-    C_n = G_n - 1 / n sum_(k = 1)^(n - 1) k binom(n, k) C_k G_(n - k)
+  C_n = G_n - 1 / n sum_(k = 1)^(n - 1) k binom(n, k) C_k G_(n - k)
 $
 - Number of graphs with n nodes and k connected components
 $
-    D[n][k] = sum_(s = 1)^n binom(n - 1, s - 1) C_s D[n - s] [k - 1]
+  D[n][k] = sum_(s = 1)^n binom(n - 1, s - 1) C_s D[n - s] [k - 1]
 $
 = Fibonacci
 #columns(2)[
-    $ F_n = sum_(k = 0)^floor((n - 1) / 2) binom(n - k - 1, k) $
-    $ sum_(j = 0)^n F_j = F_(n + 2) - 1 $
-    $ sum_(j = 0)^n F_j^2 = F_n F_(n + 1) $
-    $ sum_(j = 1)^n F_(2j) = F_(2n + 1) - 1 $
-    $ sum_(j = 1)^n F_(2j - 1) = F_(2n) $
-    $ sum_(j = 1)^(2n-1) F_j F_(j + 1) = F_(2n)^2 $
-    #colbreak()
-    $ sum_(j = 1)^(2n) F_j F_(j + 1) = F_(2n + 1)^2 - 1 $
-    $ F_(n + 1) F_(n - 1) - F_n^2 = (-1)^n $
-    $ F_n^2 - F_(n - r) F_(n + r) = (-1)^(n - r) F_r^2 $
-    $ F_(n + k) F_(m - k) - F_n F_m = (-1)^n F_(m - n - k) F_k$
-    $ (-1)^n F_(m - n) = F_m F_(n + 1) - F_n F_(n - 1) $
-    $ (-1)^n F_(m + n) = F_(m - 1) F_n - F_m F_(n + 1) $
-    $ m divides n <=> F_m divides F_n $
-    $ gcd(F_m, F_n) = F_(gcd(m, n)) $
+  $ F_n = sum_(k = 0)^floor((n - 1) / 2) binom(n - k - 1, k) $
+  $ sum_(j = 0)^n F_j = F_(n + 2) - 1 $
+  $ sum_(j = 0)^n F_j^2 = F_n F_(n + 1) $
+  $ sum_(j = 1)^n F_(2j) = F_(2n + 1) - 1 $
+  $ sum_(j = 1)^n F_(2j - 1) = F_(2n) $
+  $ sum_(j = 1)^(2n-1) F_j F_(j + 1) = F_(2n)^2 $
+  #colbreak()
+  $ sum_(j = 1)^(2n) F_j F_(j + 1) = F_(2n + 1)^2 - 1 $
+  $ F_(n + 1) F_(n - 1) - F_n^2 = (-1)^n $
+  $ F_n^2 - F_(n - r) F_(n + r) = (-1)^(n - r) F_r^2 $
+  $ F_(n + k) F_(m - k) - F_n F_m = (-1)^n F_(m - n - k) F_k$
+  $ (-1)^n F_(m - n) = F_m F_(n + 1) - F_n F_(n - 1) $
+  $ (-1)^n F_(m + n) = F_(m - 1) F_n - F_m F_(n + 1) $
+  $ m divides n <=> F_m divides F_n $
+  $ gcd(F_m, F_n) = F_(gcd(m, n)) $
 ]
 = Number theory
-#columns(2)[
-- Discrete log
-$ 
-    a^x = b (mod m) => a^(n p - q) = b (mod m) \
-    n = floor(sqrt(m)) + 1, p in [1, n], q in [0, n]
-$
-#colbreak()
-- Discrete root
-$
-    x^k = a (mod n) => (g^k)^y = a (mod n) \
-    g "is primitive root of " n
-$
-]
+- Generalized lucas
+```cpp
+const int MOD = 27;
+const int prime = 3;
+long long fact[MOD], ifact[MOD];
+void init(){
+    fact[0] = 1;
+    for (int i = 1; i < MOD; i++) {
+        if (i % prime != 0)
+            fact[i] = (fact[i - 1] * i) % MOD;
+        else
+            fact[i] = fact[i - 1];
+    }
+    int phi = MOD / prime * (prime - 1) - 1;
+    ifact[MOD - 1] = binpow(fact[MOD - 1], phi, MOD);
+    for (int i = MOD - 1; i > 0; i--) {
+        if (i % prime != 0)
+            ifact[i - 1] = (ifact[i] * i) % MOD;
+        else
+            ifact[i - 1] = ifact[i];
+    }
+}
+long long C(long long N, long long K, long long R){
+    return (fact[N] * ifact[R] % MOD) * ifact[K] % MOD;
+}
+int count_carry(long long n, long long k, long long r, int p, long long t){
+    long long res = 0;
+    while (n >= t) {
+        res += ((n / t) - (k / t) - (r / t));
+        t *= p;
+    }
+    return res;
+}
+long long calc(long long N, long long K, long long R) {
+    if (K > N)
+        return 0;
+    long long res = 1;
+    int vp = count_carry(N, K, R, prime, prime);
+    int vp2 = count_carry(N, K, R, prime, MOD);
+    while (N > 0) {
+        res = (res * C(N % MOD, K % MOD, R % MOD)) % MOD;
+        N /= prime; K /= prime; R /= prime;
+    }
+    res = res * binpow(prime, vp, MOD) % MOD;
+    if ((vp2 % 2 == 1) && (prime != 2 || MOD <= 4))
+        res = (MOD - res) % MOD;
+    return res;
+}
+```
 - Gray code
+#columns(2)[
 $ n xor (n >> 1) $
+#colbreak()
 ```cpp
 int rev_g (int g) {
   int n = 0;
@@ -106,7 +142,23 @@ int rev_g (int g) {
   return n;
 }
 ```
-- Chinese remainder theorem $x = sum_(i = 1) ^ n (r_i M_i M_i^(-1)) (mod M)$
+]
+#columns(
+  2,
+)[
+  - Discrete log
+  $
+    a^x = b (mod m) => a^(n p - q) = b (mod m) \
+    n = floor(sqrt(m)) + 1, p in [1, n], q in [0, n]
+  $
+  #colbreak()
+  - Discrete root
+  $
+    x^k = a (mod n) => (g^k)^y = a (mod n) \
+    g "is primitive root of " n
+  $
+  - Chinese remainder theorem $x = sum_(i = 1) ^ n (r_i M_i M_i^(-1)) (mod M)$
+]
 = Linear algebra
 - Gauss - Jordan
 ```cpp
@@ -153,16 +205,16 @@ template <class T> int gauss(vector<vector <T>> equations, vector<T>& res, const
 = Geometry
 - Common tangents of $(O, r_1)$ and $(I, r_2)$
 $
-    d_2 = plus.minus r_1, d_1 = plus.minus r_2 \
-    a = frac(
-        (d_2 - d_1) I_x plus I_y sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2),
-        I_x^2 + I_y^2
-    ) \
-    b = frac(
-        (d_2 - d_1) I_y plus I_x sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2),
-        I_x^2 + I_y^2
-    ) \
-    c = d_1
+  d_2 = plus.minus r_1, d_1 = plus.minus r_2 \
+  a = frac(
+    (d_2 - d_1) I_x plus I_y sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2), I_x^2 + I_y^2,
+
+  ) \
+  b = frac(
+    (d_2 - d_1) I_y plus I_x sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2), I_x^2 + I_y^2,
+
+  ) \
+  c = d_1
 $
 - Convex hull
 ```cpp
@@ -207,13 +259,13 @@ bool is_convex(vector <Point> P){
 - Planar graphs: $bar "vertices" bar - bar "edges" bar + bar "faces (or regions)" bar = 2$
 - Pick's theorem
 $
-    S = I + B/2 - 1
+  S = I + B/2 - 1
 $
-$I$: the number of points with integer coordinates lying strictly inside \
+$I$: the number of points with integer coordinates lying strictly inside\
 $B$: the number of points lying on polygon sides
 - Shoelace formula
 $
-    S = 1/2 sum_(i = 1)^n (y_i + y_(i + 1)) (x_i - x_(i + 1)) = sum_(p, q in "edges") ((p_x - q_x) (p_y + q_y)) / 2
+  S = 1/2 sum_(i = 1)^n (y_i + y_(i + 1)) (x_i - x_(i + 1)) = sum_(p, q in "edges") ((p_x - q_x) (p_y + q_y)) / 2
 $
 - Manhattan distance
 $ "manhattan"((x_1, y_1),(x_2, y_2)) = max(bar (x_1 + y_1) - (x_2 + y_2) bar, bar (x_1 - y_1) - (x_2 - y_2) bar) $
@@ -448,7 +500,7 @@ class Trie {
     }
     bool erase(const int& num) {
         if (!find(num)) return false;
-        return !erase_recursive(root, num, 31);        
+        return !erase_recursive(root, num, 31);
     }
     int find_max_xor(const int& num) {
         Node* cur = root;
@@ -568,7 +620,7 @@ for (int i = 1; i <= m; ++i) {
     while (k > 0 && T[i] != S[k + 1]) k = kmp[k];
     if (T[i] == S[k + 1]) match[i] = ++k;
     else match[i] = 0;
-   
+
     // Found S in T[i - length(S) + 1..i]
     if (match[i] == n) {
         cout << i - n + 1 << ' ';
@@ -578,19 +630,19 @@ for (int i = 1; i <= m; ++i) {
 = Rabin - Karp
 ```cpp
 vector<int> rabin_karp(string const& s, string const& t) {
-    const int p = 31; 
+    const int p = 31;
     const int m = 1e9 + 9;
     int S = s.size(), T = t.size();
-    vector<long long> p_pow(max(S, T)); 
-    p_pow[0] = 1; 
-    for (int i = 1; i < (int)p_pow.size(); i++) 
+    vector<long long> p_pow(max(S, T));
+    p_pow[0] = 1;
+    for (int i = 1; i < (int)p_pow.size(); i++)
         p_pow[i] = (p_pow[i-1] * p) % m;
-    vector<long long> h(T + 1, 0); 
+    vector<long long> h(T + 1, 0);
     for (int i = 0; i < T; i++)
-        h[i+1] = (h[i] + (t[i] - 'a' + 1) * p_pow[i]) % m; 
-    long long h_s = 0; 
-    for (int i = 0; i < S; i++) 
-        h_s = (h_s + (s[i] - 'a' + 1) * p_pow[i]) % m; 
+        h[i+1] = (h[i] + (t[i] - 'a' + 1) * p_pow[i]) % m;
+    long long h_s = 0;
+    for (int i = 0; i < S; i++)
+        h_s = (h_s + (s[i] - 'a' + 1) * p_pow[i]) % m;
     vector<int> occurrences;
     for (int i = 0; i + S - 1 < T; i++) {
         long long cur_h = (h[i+S] + m - h[i]) % m;
@@ -803,7 +855,7 @@ void fft(vector<cd> & a, bool invert) {
 vector<int> multiply_polynomial(vector<int> const& a, vector<int> const& b) {
     vector<cd> fa(a.begin(), a.end()), fb(b.begin(), b.end());
     int n = 1;
-    while (n < a.size() + b.size()) 
+    while (n < a.size() + b.size())
         n <<= 1;
     fa.resize(n);
     fb.resize(n);
@@ -959,8 +1011,8 @@ struct Edge {
     int target, id;
     Edge(int _target, int _id): target(_target), id(_id) {}
 };
-vector<Edge> adj[N]; 
-bool used_edge[M]; 
+vector<Edge> adj[N];
+bool used_edge[M];
 list<int> euler_walk(int u) {
     list<int> ans;
     ans.push_back(u);
