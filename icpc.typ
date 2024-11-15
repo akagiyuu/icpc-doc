@@ -13,7 +13,7 @@
   $ sum_(j = 1)^(2n) F_j F_(j + 1) = F_(2n + 1)^2 - 1 $
   $ F_(n + 1) F_(n - 1) - F_n^2 = (-1)^n $
   $ F_n^2 - F_(n - r) F_(n + r) = (-1)^(n - r) F_r^2 $
-  $ F_(n + k) F_(m - k) - F_n F_m = (-1)^n F_(m - n - k) F_k$
+  $F_(n + k) F_(m - k) - F_n F_m = (-1)^n F_(m - n - k) F_k$
   $ (-1)^n F_(m - n) = F_m F_(n + 1) - F_n F_(n - 1) $
   $ (-1)^n F_(m + n) = F_(m - 1) F_n - F_m F_(n + 1) $
   $ m divides n <=> F_m divides F_n $
@@ -35,10 +35,7 @@
   $ sum_(i = 0)^n i binom(n, i) = n 2^(n - 1) $
   $ sum_(k = 0)^n binom(r, k) binom(s, n - k) = binom(r + s, n) $
 ]
-- Catalan
-$
-  C_n = 1/(n + 1) binom(2n, n) = sum_(k = 0)^(n - 1) C_k C_(n - 1 - k)
-$
+- Catalan $C_n = 1/(n + 1) binom(2n, n) = sum_(k = 0)^(n - 1) C_k C_(n - 1 - k)$
 - Next combination
 ```cpp
 bool next_combination(vector<int>& a, int n) {
@@ -56,15 +53,14 @@ bool next_combination(vector<int>& a, int n) {
 ```
 - Number of elements in exactly $r$ set
 $
-  sum_(m = r)^n (-1)^(m - r) binom(m, r) sum_(bar X bar = m) bar union_(i in X) A_i bar
+  sum_(m = r)^n (
+    -1
+  )^(m - r) binom(m, r) sum_(bar X bar = m) bar union_(i in X) A_i bar
 $
 - Burnside's lemma
 $
-  bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) I(pi)
+  bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) "Number of fixed points of transformation " pi
 $
-$|G|$: number of transformation\
-$pi$: a transformation with retain the class of a element\
-$I(pi)$: number of fixed points of $pi$
 - Bishop placement
 ```cpp
 int bishop_placements(int N, int K)
@@ -96,8 +92,7 @@ $
 = Number theory
 - Generalized lucas
 ```cpp
-const int MOD = 27;
-const int prime = 3;
+const int MOD = 27, prime = 3;
 long long fact[MOD], ifact[MOD];
 void init(){
     fact[0] = 1;
@@ -145,20 +140,15 @@ long long calc(long long N, long long K, long long R) {
 ```
 - Gray code
 #columns(2)[
-$ n xor (n >> 1) $
-#colbreak()
-```cpp
-int rev_g (int g) {
-  int n = 0;
-  for (; g; g >>= 1)
-    n ^= g;
-  return n;
-}
-```
+  $ g = n xor (n >> 1) $
+  #colbreak()
+  ```cpp
+  int rev_g (int g)
+    int n = 0;
+    for (; g; g >>= 1) n ^= g;
+  ```
 ]
-#columns(
-  2,
-)[
+#columns(2)[
   - Discrete log
   $
     a^x = b (mod m) => a^(n p - q) = b (mod m) \
@@ -175,8 +165,8 @@ int rev_g (int g) {
 = Linear algebra
 - Gauss - Jordan
 ```cpp
-template <class T> int gauss(vector<vector <T>> equations, vector<T>& res, const T eps=1e-12){
-    int n = equations.size(), m = equations[0].size() - 1;
+template <class T> int gauss(vector<vector <T>> eqs, vector<T>& res, const T eps=1e-12){
+    int n = eqs.size(), m = eqs[0].size() - 1;
     int i, j, k, l, p, f_var = 0;
 
     res.assign(m, 0);
@@ -184,17 +174,17 @@ template <class T> int gauss(vector<vector <T>> equations, vector<T>& res, const
 
     for (j = 0, i = 0; j < m && i < n; j++){
         for (k = i, p = i; k < n; k++){
-            if (abs(equations[k][j]) > abs(equations[p][j])) p = k;
+            if (abs(eqs[k][j]) > abs(eqs[p][j])) p = k;
         }
 
-        if (abs(equations[p][j]) > eps){
+        if (abs(eqs[p][j]) > eps){
             pos[j] = i;
-            for (l = j; l <= m; l++) swap(equations[p][l], equations[i][l]);
+            for (l = j; l <= m; l++) swap(eqs[p][l], eqs[i][l]);
 
             for (k = 0; k < n; k++){
                 if (k != i){
-                    T x = equations[k][j] / equations[i][j];
-                    for (l = j; l <= m; l++) equations[k][l] -= equations[i][l] * x;
+                    T x = eqs[k][j] / eqs[i][j];
+                    for (l = j; l <= m; l++) eqs[k][l] -= eqs[i][l] * x;
                 }
             }
             i++;
@@ -203,32 +193,38 @@ template <class T> int gauss(vector<vector <T>> equations, vector<T>& res, const
 
     for (i = 0; i < m; i++){
         if (pos[i] == -1) f_var++;
-        else res[i] = equations[pos[i]][m] / equations[pos[i]][i];
+        else res[i] = eqs[pos[i]][m] / eqs[pos[i]][i];
     }
 
     for (i = 0; i < n; i++) {
         T val = 0;
-        for (j = 0; j < m; j++) val += res[j] * equations[i][j];
-        if (abs(val - equations[i][m]) > eps) return -1;
+        for (j = 0; j < m; j++) val += res[j] * eqs[i][j];
+        if (abs(val - eqs[i][m]) > eps) return -1;
     }
 
     return f_var;
 }
 ```
 = Geometry
-- Common tangents of $(O, r_1)$ and $(I, r_2)$
+- Common tangents of $(O, r_1)$ and $(I, r_2)$ ($a x + b y +c = 0$)
 $
-  d_2 = plus.minus r_1, d_1 = plus.minus r_2 \
-  a = frac(
-    (d_2 - d_1) I_x plus I_y sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2), I_x^2 + I_y^2,
-
-  ) \
-  b = frac(
-    (d_2 - d_1) I_y plus I_x sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2), I_x^2 + I_y^2,
-
-  ) \
-  c = d_1
+  d_2 = plus.minus r_1, d_1 = plus.minus r_2, c = d_1
 $
+#columns(2)[
+  $
+    a = frac(
+        (d_2 - d_1) I_x plus I_y sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2), I_x^2 + I_y^2,
+
+      )
+  $
+  #colbreak()
+  $
+    b = frac(
+        (d_2 - d_1) I_y plus I_x sqrt(I_x^2 + I_y^2 - (d_2 - d_1)^2), I_x^2 + I_y^2,
+
+      )
+  $
+]
 - Convex hull
 ```cpp
 struct Point {
@@ -338,16 +334,22 @@ bool pointInConvexPolygon(pt point) {
 - Planar graphs: $bar "vertices" bar - bar "edges" bar + bar "faces (or regions)" bar = 2$
 - Pick's theorem
 $
-  S = I + B/2 - 1
+  S = I + B / 2 - 1
 $
 $I$: the number of points with integer coordinates lying strictly inside\
 $B$: the number of points lying on polygon sides
 - Shoelace formula
 $
-  S = 1/2 sum_(i = 1)^n (y_i + y_(i + 1)) (x_i - x_(i + 1)) = sum_(p, q in "edges") ((p_x - q_x) (p_y + q_y)) / 2
+  S = 1 / 2 sum_(i = 1)^n (y_i + y_(i + 1)) (
+    x_i - x_(i + 1)
+  ) = sum_(p, q in "edges") ((p_x - q_x) (p_y + q_y)) / 2
 $
 - Manhattan distance
-$ "manhattan"((x_1, y_1),(x_2, y_2)) = max(bar (x_1 + y_1) - (x_2 + y_2) bar, bar (x_1 - y_1) - (x_2 - y_2) bar) $
+$
+  d(
+    (x_1, y_1),(x_2, y_2)
+  ) = max(bar (x_1 + y_1) - (x_2 + y_2) bar, bar (x_1 - y_1) - (x_2 - y_2) bar)
+$
 - Segment intersection
 ```cpp
 const double EPS = 1E-9;
@@ -396,18 +398,14 @@ struct event {
         return tp > e.tp;
     }
 };
-
 set<seg> s;
 vector<set<seg>::iterator> where;
-
 set<seg>::iterator prev(set<seg>::iterator it) {
     return it == s.begin() ? s.end() : --it;
 }
-
 set<seg>::iterator next(set<seg>::iterator it) {
     return ++it;
 }
-
 pair<int, int> solve(const vector<seg>& a) {
     int n = (int)a.size();
     vector<event> e;
@@ -416,7 +414,6 @@ pair<int, int> solve(const vector<seg>& a) {
         e.push_back(event(max(a[i].p.x, a[i].q.x), -1, i));
     }
     sort(e.begin(), e.end());
-
     s.clear();
     where.resize(a.size());
     for (size_t i = 0; i < e.size(); ++i) {
@@ -435,7 +432,6 @@ pair<int, int> solve(const vector<seg>& a) {
             s.erase(where[id]);
         }
     }
-
     return make_pair(-1, -1);
 }
 ```
@@ -481,11 +477,11 @@ void dfs(int u) {
         if (v == up[u][0]) continue;
         height[v] = height[u] + 1;
         up[v][0] = u;
-        min_dist[v][0] = uv;
-        max_dist[v][0] = uv;
+        min_d[v][0] = uv;
+        max_d[v][0] = uv;
         for (int j = 1; j < LOG; ++j) {
-            min_dist[v][j] = min(min_dist[v][j - 1], min_dist[up[v][j - 1]][j - 1]);
-            max_dist[v][j] = max(max_dist[v][j - 1], max_dist[up[v][j - 1]][j - 1]);
+            min_d[v][j] = min(min_d[v][j - 1], min_d[up[v][j - 1]][j - 1]);
+            max_d[v][j] = max(max_d[v][j - 1], max_d[up[v][j - 1]][j - 1]);
             up[v][j] = up[up[v][j - 1]][j - 1];
         }
         dfs(v);
@@ -497,23 +493,23 @@ pair<int, int> lca(int u, int v) {
     int diff = height[u] - height[v];
     for (int i = 0; (1 << i) <= diff; ++i)
         if (diff & (1 << i)) {
-            res.first = min(res.first, min_dist[u][i]);
-            res.second = max(res.second, max_dist[u][i]);
+            res.first = min(res.first, min_d[u][i]);
+            res.second = max(res.second, max_d[u][i]);
             u = up[u][i];
         }
     if (u == v) return res;
     int k = __lg(height[u]);
     for (int i = k; i >= 0; --i) {
         if (up[u][i] != up[v][i]) {
-            res.first = min({res.first, min_dist[u][i], min_dist[v][i]});
-            res.second = max({res.second, max_dist[u][i], max_dist[v][i]});
+            res.first = min({res.first, min_d[u][i], min_d[v][i]});
+            res.second = max({res.second, max_d[u][i], max_d[v][i]});
 
             u = up[u][i];
             v = up[v][i];
         }
     }
-    res.first = min({res.first, min_dist[u][0], min_dist[v][0]});
-    res.second = max({res.second, max_dist[u][0], max_dist[v][0]});
+    res.first = min({res.first, min_d[u][0], min_d[v][0]});
+    res.second = max({res.second, max_d[u][0], max_d[v][0]});
     return res;
 }
 ```
@@ -662,7 +658,6 @@ class Trie {
     }
 };
 ```
-= Aho - Corasick
 ```cpp
 struct aho_corasick{
     struct node{
@@ -699,7 +694,6 @@ for (int i = 1; i <= m; ++i) {
     while (k > 0 && T[i] != S[k + 1]) k = kmp[k];
     if (T[i] == S[k + 1]) match[i] = ++k;
     else match[i] = 0;
-
     // Found S in T[i - length(S) + 1..i]
     if (match[i] == n) {
         cout << i - n + 1 << ' ';
@@ -741,7 +735,6 @@ vector<int> z_function(string s) {
             z[i] = min(r - i + 1, z[i - l]);
         while (i + z[i] < n && s[z[i]] == s[i + z[i]])
             ++z[i];
-        // update [l, r]
         if (i + z[i] - 1 > r) {
             l = i;
             r = i + z[i] - 1;
@@ -777,19 +770,6 @@ bool isPrime(long long n, int k = 100) {
 ```
 = Minkowski sum
 ```cpp
-struct pt{
-    long long x, y;
-    pt operator + (const pt & p) const {
-        return pt{x + p.x, y + p.y};
-    }
-    pt operator - (const pt & p) const {
-        return pt{x - p.x, y - p.y};
-    }
-    long long cross(const pt & p) const {
-        return x * p.y - y * p.x;
-    }
-};
-
 void reorder_polygon(vector<pt> & P){
     size_t pos = 0;
     for(size_t i = 1; i < P.size(); i++){
@@ -1118,7 +1098,6 @@ vector<vector<ii>> AdjList;
 int Dist[MaxN], Cnt[MaxN], S, N;
 bool inqueue[MaxN];
 queue<int> q;
-
 bool spfa() {
     for(int i = 1 ; i <= N ; i++) {
         Dist[i] = Inf;
@@ -1132,11 +1111,9 @@ bool spfa() {
         int u = q.front();
         q.pop();
         inqueue[u] = false;
-
         for (ii tmp: AdjList[u]) {
             int v = tmp.first;
             int w = tmp.second;
-
             if (Dist[u] + w < Dist[v]) {
                 Dist[v] = Dist[u] + w;
                 if (!inqueue[v]) {
@@ -1158,7 +1135,6 @@ void add(int u) {
     tour[++m] = u;
     en[u] = m;
 }
-
 void dfs(int u, int parent_of_u) {
     h[u] = h[parent_of_u] + 1;
     add(u);
@@ -1208,9 +1184,7 @@ int main() {
 ```cpp
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-using namespace std;
 using namespace __gnu_pbds;
-#define mp make_pair
 typedef pair<int, int> pii;
 typedef tree<pii, null_type, less<pii>, rb_tree_tag, tree_order_statistics_node_update> OST;
 const int N = 200001;
@@ -1218,18 +1192,18 @@ OST bit[N];
 void insert(int x, int y)
 {
     for(int i = x; i < N; i += i & -i)
-	bit[i].insert(mp(y, x));
+	bit[i].insert(make_pair(y, x));
 }
 void remove(int x, int y)
 {
     for(int i = x; i < N; i += i & -i)
-	bit[i].erase(mp(y, x));
+	bit[i].erase(make_pair(y, x));
 }
 int query(int x, int y)
 {
     int ans = 0;
     for(int i = x; i > 0; i -= i & -i)
-	ans += bit[i].order_of_key(mp(y+1, 0));
+	ans += bit[i].order_of_key(make_pair(y+1, 0));
     return ans;
 }
 ```
@@ -1247,3 +1221,36 @@ gp_hash_table<int, int, chash> table;
 - Josephus problem $J_(n,k) = (J_(n-1, k) + k) mod n$
 - 15 puzzle game have solution if $"Number of inversion" + floor("Position of empty cell" / 4) mod 2 = 0$
 - $k^("th")$ min element ```cpp nth_element(a.begin(), a.begin() + k, a.end(), [](int a, int b) return a < b);```
+- Fast IO
+```cpp
+nline char gc() {
+   static char buf[1 << 16];
+   static size_t bc, be;
+   if (bc >= be) {
+       buf[0] = 0, bc = 0;
+       be = fread(buf, 1, sizeof(buf), stdin);
+   }
+   return buf[bc++];
+}
+inline void readInt(int& x) {
+   int c;
+   x = 0;
+   while ((c = gc()) < '0' || c > '9');
+   do {
+       x = x * 10 + (c - '0');
+   } while ((c = gc()) >= '0' && c <= '9');
+}
+char outbuf[20];
+inline void writeInt(int x) {
+   if (x == 0) {
+       putchar('0');
+       return;
+   }
+   int i = 0;
+   while (x) {
+       outbuf[i++] = static_cast<char>(x % 10) + '0';
+       x /= 10;
+   }
+   while (i--) putchar(outbuf[i]);
+}
+```
