@@ -1,9 +1,24 @@
 #set text(size: 13pt)
-#set page(
-    margin: 0.75in,
-    paper: "a4"
-)
+#set page(margin: 0.75in, paper: "a4")
 
+= Fibonacci
+#columns(2)[
+  $ F_n = sum_(k = 0)^floor((n - 1) / 2) binom(n - k - 1, k) $
+  $ sum_(j = 0)^n F_j = F_(n + 2) - 1 $
+  $ sum_(j = 0)^n F_j^2 = F_n F_(n + 1) $
+  $ sum_(j = 1)^n F_(2j) = F_(2n + 1) - 1 $
+  $ sum_(j = 1)^n F_(2j - 1) = F_(2n) $
+  $ sum_(j = 1)^(2n-1) F_j F_(j + 1) = F_(2n)^2 $
+  #colbreak()
+  $ sum_(j = 1)^(2n) F_j F_(j + 1) = F_(2n + 1)^2 - 1 $
+  $ F_(n + 1) F_(n - 1) - F_n^2 = (-1)^n $
+  $ F_n^2 - F_(n - r) F_(n + r) = (-1)^(n - r) F_r^2 $
+  $ F_(n + k) F_(m - k) - F_n F_m = (-1)^n F_(m - n - k) F_k$
+  $ (-1)^n F_(m - n) = F_m F_(n + 1) - F_n F_(n - 1) $
+  $ (-1)^n F_(m + n) = F_(m - 1) F_n - F_m F_(n + 1) $
+  $ m divides n <=> F_m divides F_n $
+  $ gcd(F_m, F_n) = F_(gcd(m, n)) $
+]
 = Combinatorics
 - Binomial
 #columns(2)[
@@ -47,15 +62,28 @@ $
 $
   bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) I(pi)
 $
-$|G|$: count all permutation\
+$|G|$: number of transformation\
 $pi$: a transformation with retain the class of a element\
 $I(pi)$: number of fixed points of $pi$
-- Polýa enumeration theorem
-$
-  bar "Classes" bar = 1 / (bar G bar) sum_(pi in G) k^(C(pi))
-$
-$C(pi)$: number of cycles in $pi$ \
-$k$: number of values that each representation element can take
+- Bishop placement
+```cpp
+int bishop_placements(int N, int K)
+{
+    if (K > 2 * N - 1)
+        return 0;
+    vector<vector<int>> D(N * 2, vector<int>(K + 1));
+    for (int i = 0; i < N * 2; ++i)
+        D[i][0] = 1;
+    D[1][1] = 1;
+    for (int i = 2; i < N * 2; ++i)
+        for (int j = 1; j <= K; ++j)
+            D[i][j] = D[i-2][j] + D[i-2][j-1] * (squares(i) - j + 1);
+    int ans = 0;
+    for (int i = 0; i <= K; ++i)
+        ans += D[N*2-1][i] * D[N*2-2][K-i];
+    return ans;
+}
+```
 - Number of labeled graph $G_n = "pow"(2, (n (n + 1)) / 2)$
 - Number of connected labeled graphs
 $
@@ -65,24 +93,6 @@ $
 $
   D[n][k] = sum_(s = 1)^n binom(n - 1, s - 1) C_s D[n - s] [k - 1]
 $
-= Fibonacci
-#columns(2)[
-  $ F_n = sum_(k = 0)^floor((n - 1) / 2) binom(n - k - 1, k) $
-  $ sum_(j = 0)^n F_j = F_(n + 2) - 1 $
-  $ sum_(j = 0)^n F_j^2 = F_n F_(n + 1) $
-  $ sum_(j = 1)^n F_(2j) = F_(2n + 1) - 1 $
-  $ sum_(j = 1)^n F_(2j - 1) = F_(2n) $
-  $ sum_(j = 1)^(2n-1) F_j F_(j + 1) = F_(2n)^2 $
-  #colbreak()
-  $ sum_(j = 1)^(2n) F_j F_(j + 1) = F_(2n + 1)^2 - 1 $
-  $ F_(n + 1) F_(n - 1) - F_n^2 = (-1)^n $
-  $ F_n^2 - F_(n - r) F_(n + r) = (-1)^(n - r) F_r^2 $
-  $ F_(n + k) F_(m - k) - F_n F_m = (-1)^n F_(m - n - k) F_k$
-  $ (-1)^n F_(m - n) = F_m F_(n + 1) - F_n F_(n - 1) $
-  $ (-1)^n F_(m + n) = F_(m - 1) F_n - F_m F_(n + 1) $
-  $ m divides n <=> F_m divides F_n $
-  $ gcd(F_m, F_n) = F_(gcd(m, n)) $
-]
 = Number theory
 - Generalized lucas
 ```cpp
