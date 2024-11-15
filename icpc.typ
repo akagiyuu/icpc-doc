@@ -690,6 +690,196 @@ vector<pt> minkowski(vector<pt> P, vector<pt> Q){
     return result;
 }
 ```
+= Fenwick tree
+```cpp
+void range_add(int l, int r, ll x) {
+    ft1.update(l, x);
+    ft1.update(r + 1, -x);
+    ft2.update(l, x * (l - 1));
+    ft2.update(r + 1, -x * r);
+}
+
+ll prefix_sum(int idx) {
+    return ft1.get_sum(idx) * idx - ft2.get_sum(idx);
+}
+```
+
+= Max flow
+```cpp
+struct Edge{
+    int u, v;
+    long long cap, flow;
+
+    Edge(){}
+    Edge(int u, int v, long long cap, long long flow) : u(u), v(v), cap(cap), flow(flow) {}
+};
+
+struct FlowGraph{
+    vector <int> adj[MAXN];
+    vector <struct Edge> E;
+    int n, src, sink, Q[MAXN], ptr[MAXN], dis[MAXN];
+
+    FlowGraph(){}
+    FlowGraph(int n, int src, int sink): n(n), src(src), sink(sink) {}
+
+    void add_directed_edge(int u, int v, long long cap){
+        adj[u].push_back(E.size());
+        E.push_back(Edge(u, v, cap, 0));
+
+        adj[v].push_back(E.size());
+        E.push_back(Edge(v, u, 0, 0));
+    }
+
+    void add_edge(int u, int v, int cap){
+        add_directed_edge(u, v, cap);
+        add_directed_edge(v, u, cap);
+    }
+
+    bool bfs(){
+        int u, f = 0, l = 0;
+        memset(dis, -1, sizeof(dis[0]) * n);
+
+        dis[src] = 0, Q[l++] = src;
+        while (f < l && dis[sink] == -1){
+            u = Q[f++];
+            for (auto id: adj[u]){
+                if (dis[E[id].v] == -1 && E[id].flow < E[id].cap){
+                    Q[l++] = E[id].v;
+                    dis[E[id].v] = dis[u] + 1;
+                }
+            }
+        }
+        return dis[sink] != -1;
+    }
+
+    long long dfs(int u, long long flow){
+        if (u == sink || !flow) return flow;
+
+        int len = adj[u].size();
+        while (ptr[u] < len){
+            int id = adj[u][ptr[u]];
+            if (dis[E[id].v] == dis[u] + 1){
+                long long f = dfs(E[id].v, min(flow, E[id].cap - E[id].flow));
+                if (f){
+                    E[id].flow += f, E[id ^ 1].flow -= f;
+                    return f;
+                }
+            }
+            ptr[u]++;
+        }
+
+        return 0;
+    }
+
+    long long maxflow(){
+        long long flow = 0;
+
+        while (bfs()){
+            memset(ptr, 0, n * sizeof(ptr[0]));
+            while (long long f = dfs(src, LLONG_MAX)){
+                flow += f;
+            }
+        }
+
+        return flow;
+    }
+};
+
+struct FlowGraphWithNodeCap{
+    FlowGraph flowgraph;
+
+    FlowGraphWithNodeCap(int n, int src, int sink, vector <long long> node_capacity){
+        flowgraph = FlowGraph(2 * n, 2 * src, 2 * sink + 1);
+
+        for (int i = 0; i < n; i++){
+            flowgraph.add_directed_edge(2 * i, 2 * i + 1, node_capacity[i]);
+        }
+    }
+
+    void add_directed_edge(int u, int v, long long cap){
+        flowgraph.add_directed_edge(2 * u + 1, 2 * v, cap);
+    }
+
+    void add_edge(int u, int v, long long cap){
+        add_directed_edge(u, v, cap);
+        add_directed_edge(v, u, cap);
+    }
+
+    long long maxflow(){
+        return flowgraph.maxflow();
+    }
+};
+```
+= Max xor subset
+```cpp
+long long max_xor_subset(const vector<long long>& ar){
+    long long m, x, res = 0;
+    int i, j, l, n = ar.size();
+
+    vector <long long> v[64];
+    for (i = 0; i < n; i++) v[bitlen(ar[i])].push_back(ar[i]);
+
+    for (i = 63; i > 0; i--){
+        l = v[i].size();
+        if (l){
+            m = v[i][0];
+            res = max(res, res ^ m);
+
+            for (j = 1; j < l; j++){
+                x = m ^ v[i][j];
+                if (x) v[bitlen(x)].push_back(x);
+            }
+            v[i].clear();
+        }
+    }
+
+    return res;
+}
+```
+= Manacher
+```cpp
+vector <int> manacher(const string& str){
+    int i, j, k, l = str.size(), n = l << 1;
+    vector <int> pal(n);
+
+    for (i = 0, j = 0, k = 0; i < n; j = max(0, j - k), i += k){
+        while (j <= i && (i + j + 1) < n && str[(i - j) >> 1] == str[(i + j + 1) >> 1]) j++;
+        for (k = 1, pal[i] = j; k <= i && k <= pal[i] && (pal[i] - k) != pal[i - k]; k++){
+            pal[i + k] = min(pal[i - k], pal[i] - k);
+        }
+    }
+    pal.pop_back();
+    return pal;
+}
+```
+= MEX
+```cpp
+class Mex {
+    map<int, int> frequency;
+    set<int> missing_numbers;
+    vector<int> A;
+    Mex(const vector<int>& A) : A(A) {
+        for (int i = 0; i <= A.size(); i++)
+            missing_numbers.insert(i);
+
+        for (int x : A) {
+            ++frequency[x];
+            missing_numbers.erase(x);
+        }
+    }
+    int mex() {
+        return *missing_numbers.begin();
+    }
+    void update(int idx, int value) {
+        if (--frequency[A[idx]] == 0)
+            missing_numbers.insert(A[idx]);
+        A[idx] = value;
+        ++frequency[value];
+        missing_numbers.erase(value);
+    }
+};
+```
+
 = Misc
 - Hash table
 ```cpp
