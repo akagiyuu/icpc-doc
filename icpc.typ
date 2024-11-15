@@ -1,5 +1,8 @@
 #set text(size: 13pt)
-#set page(paper: "a4")
+#set page(
+    margin: 0.75in,
+    paper: "a4"
+)
 
 = Combinatorics
 - Binomial
