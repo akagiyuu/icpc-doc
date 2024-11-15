@@ -705,112 +705,6 @@ ll prefix_sum(int idx) {
 }
 ```
 
-= Max flow
-```cpp
-struct Edge{
-    int u, v;
-    long long cap, flow;
-
-    Edge(){}
-    Edge(int u, int v, long long cap, long long flow) : u(u), v(v), cap(cap), flow(flow) {}
-};
-
-struct FlowGraph{
-    vector <int> adj[MAXN];
-    vector <struct Edge> E;
-    int n, src, sink, Q[MAXN], ptr[MAXN], dis[MAXN];
-
-    FlowGraph(){}
-    FlowGraph(int n, int src, int sink): n(n), src(src), sink(sink) {}
-
-    void add_directed_edge(int u, int v, long long cap){
-        adj[u].push_back(E.size());
-        E.push_back(Edge(u, v, cap, 0));
-
-        adj[v].push_back(E.size());
-        E.push_back(Edge(v, u, 0, 0));
-    }
-
-    void add_edge(int u, int v, int cap){
-        add_directed_edge(u, v, cap);
-        add_directed_edge(v, u, cap);
-    }
-
-    bool bfs(){
-        int u, f = 0, l = 0;
-        memset(dis, -1, sizeof(dis[0]) * n);
-
-        dis[src] = 0, Q[l++] = src;
-        while (f < l && dis[sink] == -1){
-            u = Q[f++];
-            for (auto id: adj[u]){
-                if (dis[E[id].v] == -1 && E[id].flow < E[id].cap){
-                    Q[l++] = E[id].v;
-                    dis[E[id].v] = dis[u] + 1;
-                }
-            }
-        }
-        return dis[sink] != -1;
-    }
-
-    long long dfs(int u, long long flow){
-        if (u == sink || !flow) return flow;
-
-        int len = adj[u].size();
-        while (ptr[u] < len){
-            int id = adj[u][ptr[u]];
-            if (dis[E[id].v] == dis[u] + 1){
-                long long f = dfs(E[id].v, min(flow, E[id].cap - E[id].flow));
-                if (f){
-                    E[id].flow += f, E[id ^ 1].flow -= f;
-                    return f;
-                }
-            }
-            ptr[u]++;
-        }
-
-        return 0;
-    }
-
-    long long maxflow(){
-        long long flow = 0;
-
-        while (bfs()){
-            memset(ptr, 0, n * sizeof(ptr[0]));
-            while (long long f = dfs(src, LLONG_MAX)){
-                flow += f;
-            }
-        }
-
-        return flow;
-    }
-};
-
-struct FlowGraphWithNodeCap{
-    FlowGraph flowgraph;
-
-    FlowGraphWithNodeCap(int n, int src, int sink, vector <long long> node_capacity){
-        flowgraph = FlowGraph(2 * n, 2 * src, 2 * sink + 1);
-
-        for (int i = 0; i < n; i++){
-            flowgraph.add_directed_edge(2 * i, 2 * i + 1, node_capacity[i]);
-        }
-    }
-
-    void add_directed_edge(int u, int v, long long cap){
-        flowgraph.add_directed_edge(2 * u + 1, 2 * v, cap);
-    }
-
-    void add_edge(int u, int v, long long cap){
-        add_directed_edge(u, v, cap);
-        add_directed_edge(v, u, cap);
-    }
-
-    long long maxflow(){
-        return flowgraph.maxflow();
-    }
-};
-```
 = Max xor subset
 ```cpp
 long long max_xor_subset(const vector<long long>& ar){
@@ -925,6 +819,259 @@ vector<int> multiply_polynomial(vector<int> const& a, vector<int> const& b) {
         result[i] = round(fa[i].real());
     return result;
 }
+```
+= Graph
+- Max flow
+```cpp
+struct Edge{
+    int u, v;
+    long long cap, flow;
+
+    Edge(){}
+    Edge(int u, int v, long long cap, long long flow) : u(u), v(v), cap(cap), flow(flow) {}
+};
+
+struct FlowGraph{
+    vector <int> adj[MAXN];
+    vector <struct Edge> E;
+    int n, src, sink, Q[MAXN], ptr[MAXN], dis[MAXN];
+
+    FlowGraph(){}
+    FlowGraph(int n, int src, int sink): n(n), src(src), sink(sink) {}
+
+    void add_directed_edge(int u, int v, long long cap){
+        adj[u].push_back(E.size());
+        E.push_back(Edge(u, v, cap, 0));
+
+        adj[v].push_back(E.size());
+        E.push_back(Edge(v, u, 0, 0));
+    }
+
+    void add_edge(int u, int v, int cap){
+        add_directed_edge(u, v, cap);
+        add_directed_edge(v, u, cap);
+    }
+
+    bool bfs(){
+        int u, f = 0, l = 0;
+        memset(dis, -1, sizeof(dis[0]) * n);
+
+        dis[src] = 0, Q[l++] = src;
+        while (f < l && dis[sink] == -1){
+            u = Q[f++];
+            for (auto id: adj[u]){
+                if (dis[E[id].v] == -1 && E[id].flow < E[id].cap){
+                    Q[l++] = E[id].v;
+                    dis[E[id].v] = dis[u] + 1;
+                }
+            }
+        }
+        return dis[sink] != -1;
+    }
+
+    long long dfs(int u, long long flow){
+        if (u == sink || !flow) return flow;
+
+        int len = adj[u].size();
+        while (ptr[u] < len){
+            int id = adj[u][ptr[u]];
+            if (dis[E[id].v] == dis[u] + 1){
+                long long f = dfs(E[id].v, min(flow, E[id].cap - E[id].flow));
+                if (f){
+                    E[id].flow += f, E[id ^ 1].flow -= f;
+                    return f;
+                }
+            }
+            ptr[u]++;
+        }
+
+        return 0;
+    }
+
+    long long maxflow(){
+        long long flow = 0;
+
+        while (bfs()){
+            memset(ptr, 0, n * sizeof(ptr[0]));
+            while (long long f = dfs(src, LLONG_MAX)){
+                flow += f;
+            }
+        }
+
+        return flow;
+    }
+};
+
+struct FlowGraphWithNodeCap{
+    FlowGraph flowgraph;
+
+    FlowGraphWithNodeCap(int n, int src, int sink, vector <long long> node_capacity){
+        flowgraph = FlowGraph(2 * n, 2 * src, 2 * sink + 1);
+
+        for (int i = 0; i < n; i++){
+            flowgraph.add_directed_edge(2 * i, 2 * i + 1, node_capacity[i]);
+        }
+    }
+
+    void add_directed_edge(int u, int v, long long cap){
+        flowgraph.add_directed_edge(2 * u + 1, 2 * v, cap);
+    }
+
+    void add_edge(int u, int v, long long cap){
+        add_directed_edge(u, v, cap);
+        add_directed_edge(v, u, cap);
+    }
+
+    long long maxflow(){
+        return flowgraph.maxflow();
+    }
+};
+```
+- Topo sort
+```cpp
+int n; // number of vertices
+vector<vector<int>> adj; // adjacency list of graph
+vector<bool> visited;
+vector<int> ans;
+void dfs(int v) {
+    visited[v] = true;
+    for (int u : adj[v]) {
+        if (!visited[u])
+            dfs(u);
+    }
+    ans.push_back(v);
+}
+
+void topological_sort() {
+    visited.assign(n, false);
+    ans.clear();
+    for (int i = 0; i < n; ++i) {
+        if (!visited[i]) {
+            dfs(i);
+        }
+    }
+    reverse(ans.begin(), ans.end());
+}
+```
+- Euler cycle
+```cpp
+struct Edge {
+    int target, id;
+    Edge(int _target, int _id): target(_target), id(_id) {}
+};
+vector<Edge> adj[N]; 
+bool used_edge[M]; 
+list<int> euler_walk(int u) {
+    list<int> ans;
+    ans.push_back(u);
+    while (!adj[u].empty()) {
+        int v = adj[u].back().target;
+        int eid = adj[u].back().id;
+        adj[u].pop_back();
+        if (used_edge[eid]) continue;
+        used_edge[eid] = true;
+        u = v;
+        ans.push_back(u);
+    }
+    for (auto it = ++ans.begin(); it != ans.end(); ++it) {
+        auto t = euler_walk(*it);
+        t.pop_back();
+        ans.splice(it, t);
+    }
+    return ans;
+}
+```
+- Shortest path
+```cpp
+vector<vector<ii>> AdjList;
+int Dist[MaxN], Cnt[MaxN], S, N;
+bool inqueue[MaxN];
+queue<int> q;
+
+bool spfa() {
+    for(int i = 1 ; i <= N ; i++) {
+        Dist[i] = Inf;
+        Cnt[i] = 0;
+        inqueue[i] = false;
+    }
+    Dist[S] = 0;
+    q.push(S);
+    inqueue[S] = true;
+    while(!q.empty()) {
+        int u = q.front();
+        q.pop();
+        inqueue[u] = false;
+
+        for (ii tmp: AdjList[u]) {
+            int v = tmp.first;
+            int w = tmp.second;
+
+            if (Dist[u] + w < Dist[v]) {
+                Dist[v] = Dist[u] + w;
+                if (!inqueue[v]) {
+                    q.push(v);
+                    inqueue[v] = true;
+                    Cnt[v]++;
+                    if (Cnt[v] > N)
+                        return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+```
+- Euler tour on tree
+```cpp
+void add(int u) {
+    tour[++m] = u;
+    en[u] = m;
+}
+
+void dfs(int u, int parent_of_u) {
+    h[u] = h[parent_of_u] + 1;
+    add(u);
+    st[u] = m;
+    for (int v : adj[u]) {
+        if (v != parent_of_u) {
+            dfs(v, u);
+        }
+    }
+    if (u != root) add(parent_of_u);
+}
+```
+- Tarjan
+```cpp
+int n, m, Num[N], Low[N], cnt = 0;
+vector<int> a[N];
+stack<int> st;
+int Count = 0;
+void visit(int u) {
+    Low[u] = Num[u] = ++cnt;
+    st.push(u);
+    for (int v : a[u])
+        if (Num[v])
+            Low[u] = min(Low[u], Num[v]);
+        else {
+            visit(v);
+            Low[u] = min(Low[u], Low[v]);
+        }
+    if (Num[u] == Low[u]) {  // found one
+        Count++;
+        int v;
+        do {
+            v = st.top();
+            st.pop();
+            Num[v] = Low[v] = oo;  // remove v from graph
+        } while (v != u);
+    }
+}
+int main() {
+    for (int i = 1; i <= n; i++)
+        if (!Num[i]) visit(i);
+    cout << Count << endl;
+}
+
 ```
 = Misc
 - Hash table
