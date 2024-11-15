@@ -1,4 +1,4 @@
-#set text(size: 12pt)
+#set text(size: 13pt)
 #set page(paper: "a4")
 
 = Combinatorics
