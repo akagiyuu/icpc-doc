@@ -703,3 +703,4 @@ gp_hash_table<int, int, chash> table;
 ```
 - Josephus problem $J_(n,k) = (J_(n-1, k) + k) mod n$
 - 15 puzzle game have solution if $"Number of inversion" + floor("Position of empty cell" / 4) mod 2 = 0$
+- $k^("th")$ min element ```cpp nth_element(a.begin(), a.begin() + k, a.end(), [](int a, int b) return a < b);```
